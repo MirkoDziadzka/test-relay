@@ -31,6 +31,32 @@
 #define RELAY_STATE_ON	0xff
 #define RELAY_STAT_OFF  0xfd
 
+int doScan() {
+	struct hid_device_info *devs, *cur_dev;
+	
+	if (hid_init()) {
+		return -1;
+	};
+
+	devs = hid_enumerate(0x0, 0x0);
+	for (cur_dev = devs ; cur_dev; cur_dev = cur_dev->next) {
+		printf("====>\n");
+		printf("\tvendor_id: %04hx\n", cur_dev->vendor_id);
+		printf("\tproduct_id: %04hx\n", cur_dev->product_id);
+		printf("\tpath: %s\n", cur_dev->path);
+		printf("\tserial_number: %ls\n", cur_dev->serial_number);
+		printf("\tmanufactorer string: %ls\n", cur_dev->manufacturer_string);
+		printf("\tproduct string: %ls\n", cur_dev->product_string);
+		printf("\trelease number:%hx\n", cur_dev->release_number);
+		printf("\tinterface number%d\n",  cur_dev->interface_number);
+		printf("\n");
+	}
+	hid_free_enumeration(devs);
+	hid_exit();
+
+	return 0;
+}
+
 int main(int argc, char* argv[])
 {
 	int res;
@@ -46,6 +72,8 @@ int main(int argc, char* argv[])
 		command = RELAY_STATE_ON;
 	} else if (strcmp(argv[1], "off") == 0) {
 		command = RELAY_STAT_OFF;
+	} else if (strcmp(argv[1], "scan") == 0) {
+		return doScan();
 	} else {
 		fprintf(stderr, "usage: %s [on|off]\n", argv[0]);
 		exit(1);

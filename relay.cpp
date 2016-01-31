@@ -45,7 +45,7 @@ int doScan() {
 		printf("\tproduct_id: %04hx\n", cur_dev->product_id);
 		printf("\tpath: %s\n", cur_dev->path);
 		printf("\tserial_number: %ls\n", cur_dev->serial_number);
-		printf("\tmanufactorer string: %ls\n", cur_dev->manufacturer_string);
+		printf("\tmanufacturer string: %ls\n", cur_dev->manufacturer_string);
 		printf("\tproduct string: %ls\n", cur_dev->product_string);
 		printf("\trelease number:%hx\n", cur_dev->release_number);
 		printf("\tinterface number%d\n",  cur_dev->interface_number);

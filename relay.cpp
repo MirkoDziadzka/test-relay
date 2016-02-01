@@ -31,6 +31,24 @@
 #define RELAY_STATE_ON	0xff
 #define RELAY_STAT_OFF  0xfd
 
+int relay_get_state(const char * path) {
+	hid_device *dev;
+	unsigned char buf[RELAY_COMMAND_SIZE];
+
+	if((dev = hid_open_path(path)) == NULL) {
+		return -1;
+	}
+	buf[0] = 0x01; // get first page
+	if(hid_get_feature_report(dev, buf, sizeof(buf)) == -1) {
+		return -1;
+	}
+	/*
+	printf("buffer -> %d %d %d %d %d %d %d %d %d\n", 
+			buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7], buf[8]);
+	*/
+	return buf[7] & 1;
+}
+
 int doScan() {
 	struct hid_device_info *devs, *cur_dev;
 	
@@ -47,8 +65,18 @@ int doScan() {
 		printf("\tserial_number: %ls\n", cur_dev->serial_number);
 		printf("\tmanufacturer string: %ls\n", cur_dev->manufacturer_string);
 		printf("\tproduct string: %ls\n", cur_dev->product_string);
-		printf("\trelease number:%hx\n", cur_dev->release_number);
+		printf("\trelease number: %hx\n", cur_dev->release_number);
 		printf("\tinterface number%d\n",  cur_dev->interface_number);
+		if (cur_dev->vendor_id == RELAY_VENDOR_ID || cur_dev->product_id == RELAY_PRODUCT_ID)
+		{
+			// will not work with more than one realy per card
+			unsigned int state = relay_get_state(cur_dev->path);
+			switch (state) {
+				case 0: printf("\tstate off\n"); break;
+				case 1: printf("\tstate on\n"); break;
+				default: printf("\tstate unknown\n"); break;
+			}
+		}
 		printf("\n");
 	}
 	hid_free_enumeration(devs);

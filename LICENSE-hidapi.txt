@@ -1,4 +1,4 @@
-License for hid.c and hidapi.c
+License for hid-*.c 
 
 copied here from https://raw.githubusercontent.com/signal11/hidapi/master/LICENSE-bsd.txt
 

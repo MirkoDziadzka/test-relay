@@ -1,13 +1,19 @@
 
 all: relay
 
+OS=$(shell uname -s)
+
+ifeq ("$(OS)","Darwin")
+	LIBS=-framework IOKit -framework CoreFoundation
+	COBJS=hid-darwin.o
+endif
+
+
 CC=gcc
 CXX=g++
-COBJS=hid.o
 CPPOBJS=relay.o
 OBJS=$(COBJS) $(CPPOBJS)
 CFLAGS+=-I../hidapi -Wall -g -c 
-LIBS=-framework IOKit -framework CoreFoundation
 
 
 relay: $(OBJS)
